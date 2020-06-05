@@ -132,7 +132,7 @@
 		},
 		"VariableMap" : {
 			"global" : {
-				"OPTIONSxTAG" : "MANUAL",
+				"OPTIONSxTAG" : "DAY",
 				"PROJECTxTAG" : "OPEN_IXIA",
 				"PLACEMENTxGROUPxSTRATEGY" : "cluster",
 				"INTERFACExSOURCExDESTxCHECK" : false,

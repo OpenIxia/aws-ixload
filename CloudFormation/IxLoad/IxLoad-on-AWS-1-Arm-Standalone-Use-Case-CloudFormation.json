@@ -132,7 +132,7 @@
 		},
 		"VariableMap" : {
 			"global" : {
-				"OPTIONSxTAG" : "MANUAL",
+				"OPTIONSxTAG" : "DAY",
 				"PROJECTxTAG" : "OPEN_IXIA",
 				"VPCxINSTANCExTENANCY" : "default",
 				"VPCxENABLExDNSxSUPPORT" : true,
