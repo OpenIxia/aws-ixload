@@ -31,6 +31,10 @@ variable "IxClientInstanceType" {
 	type = string		
 	default = "m4.xlarge"
 	description = "Instance type of Ixia Client VM"
+	validation {
+		condition = can(regex("m4.xlarge", var.IxClientInstanceType)) || can(regex("m4.large", var.IxClientInstanceType)) || can(regex("t2.xlarge", var.IxClientInstanceType))
+		error_message = "IxClientInstanceType must be one of (m4.xlarge | m4.large | t2.xlarge) types."
+	}
 }
 
 variable "IxClientSSHKey" {
@@ -43,6 +47,10 @@ variable "VMoneInstanceType" {
 	description = "Instance type of VMONE Appliance VM"
 	type = string
 	default = "c4.8xlarge"
+	validation {
+		condition =  can(regex("c4.8xlarge", var.VMoneInstanceType)) || can(regex("c4.4xlarge", var.VMoneInstanceType)) || can(regex("c4.2xlarge", var.VMoneInstanceType))
+		error_message = "VMoneInstanceType must be one of (c4.8xlarge | c4.4xlarge | c4.2xlarge) types."
+	}
 }
 
 variable "InboundIPv4CidrBlock" {

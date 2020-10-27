@@ -7,10 +7,8 @@ locals {
 	UserEmailTag = var.UserEmailTag
 	UserLoginTag = var.UserLoginTag
 	IxClientInstanceType = var.IxClientInstanceType
-	IxClientInstanceType_AllowedValues = [ "m4.xlarge","m4.large", "t2.xlarge" ]
 	IxClientSSHKey = var.IxClientSSHKey
 	VMoneInstanceType = var.VMoneInstanceType
-	VMoneInstanceType_AllowedValues = [ "c4.8xlarge", "c4.4xlarge", "c4.2xlarge" ]
 	InboundIPv4CidrBlock = var.InboundIPv4CidrBlock
 	AMIxCLIENT = {
 		us-east-1 = "ami-001717c4dfee8c9c3"
