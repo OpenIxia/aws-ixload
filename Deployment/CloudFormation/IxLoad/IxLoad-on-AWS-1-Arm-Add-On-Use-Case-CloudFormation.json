@@ -18,7 +18,7 @@
 				"REGIONxTAG" : "US_EAST_2"
 			},
 			"us-west-1" : {
-				"AMIxCLIENT" : "ami-0af1dc5b4923aeed8
+				"AMIxCLIENT" : "ami-0af1dc5b4923aeed8",
 				"AMIxVMONE" : "ami-0f24e173664fe2958",
 				"EC2xCONNECTxCIDR" : "13.52.6.112/29",
 				"EC2xREGION" : "US West (N. California)",
