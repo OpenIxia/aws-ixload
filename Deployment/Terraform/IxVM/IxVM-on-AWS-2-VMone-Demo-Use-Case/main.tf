@@ -3,6 +3,7 @@ provider "aws" {
 }
 
 locals {
+	uuid = substr(uuid(), 1, 6)
 	Region = var.Region
 	UserEmailTag = var.UserEmailTag
 	UserLoginTag = var.UserLoginTag
@@ -108,7 +109,7 @@ locals {
 	INSTANCExBLOCKxDEVICExNAME = "/dev/sda1"
 	INSTANCExEBSxDELETExONxTERMINATION = true
 	INSTANCExEBSxVOLUMExTYPE = "gp2"
-	APPxTAG = "IXLOAD"
+	APPxTAG = "IXIA"
 	APPxVERSION = "9.10"
 	VMONE1xETH0xPRIVATExIPxADDRESS = "10.0.10.11"
 	VMONE1xETH1xPRIVATExIPxADDRESSES = [ "10.0.2.12", "10.0.2.13", "10.0.2.14", "10.0.2.15", "10.0.2.16", "10.0.2.17", "10.0.2.18", "10.0.2.19", "10.0.2.20", "10.0.2.21" ]
@@ -121,7 +122,7 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_placement_group" "PlacementGroup" {
-	name = "${local.UserLoginTag}_${local.PROJECTxTAG}_PLACEMENT_GROUP_${local.REGIONxTAG["${local.Region}"]}"
+	name = "${local.UserLoginTag}_${local.PROJECTxTAG}_PLACEMENT_GROUP_${local.uuid}_${local.REGIONxTAG["${local.Region}"]}"
 	strategy = local.PLACEMENTxGROUPxSTRATEGY
 }
 
@@ -146,7 +147,7 @@ resource "aws_flow_log" "VpcFlowLog" {
 }
 
 resource "aws_iam_role" "VPCFlowLogAccessRole" {
-	name = "${local.UserLoginTag}_${local.PROJECTxTAG}_VPC_FLOW_LOG_ACCESS_ROLE_${local.REGIONxTAG["${local.Region}"]}"
+	name = "${local.UserLoginTag}_${local.PROJECTxTAG}_VPC_FLOW_LOG_ACCESS_ROLE_${local.uuid}_${local.REGIONxTAG["${local.Region}"]}"
 	assume_role_policy = <<EOF
 {
 	"Version": "2012-10-17",
@@ -166,7 +167,7 @@ EOF
 }
 
 resource "aws_cloudwatch_log_group" "VpcFlowLogGroup" {
-	name = "${local.UserLoginTag}_${local.PROJECTxTAG}_VPC_FLOW_LOG_GROUP_${local.REGIONxTAG["${local.Region}"]}"
+	name = "${local.UserLoginTag}_${local.PROJECTxTAG}_VPC_FLOW_LOG_GROUP_${local.uuid}_${local.REGIONxTAG["${local.Region}"]}"
 }
 
 resource "aws_subnet" "MgmtSubnet" {
@@ -217,6 +218,16 @@ resource "aws_security_group" "MgmtSecurityGroup" {
 	}
 }
 
+resource "aws_security_group_rule" "MgmtIngressPing" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "ICMP"
+	from_port = "-1"
+	protocol = "icmp"
+	to_port = "-1"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
 resource "aws_security_group_rule" "MgmtIngress1" {
 	type = "ingress"
 	security_group_id = aws_security_group.MgmtSecurityGroup.id
@@ -244,6 +255,56 @@ resource "aws_security_group_rule" "MgmtIngress22" {
 	cidr_blocks = [ local.InboundIPv4CidrBlock ]
 }
 
+resource "aws_security_group_rule" "MgmtIngress67" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "UDP port"
+	from_port = "67"
+	protocol = "udp"
+	to_port = "68"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress80" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port - for IM(NV)"
+	from_port = "80"
+	protocol = "tcp"
+	to_port = "80"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress111" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "111"
+	protocol = "tcp"
+	to_port = "111"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress123" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "UDP port"
+	from_port = "123"
+	protocol = "udp"
+	to_port = "123"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress161" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "UDP port"
+	from_port = "161"
+	protocol = "udp"
+	to_port = "162"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
 resource "aws_security_group_rule" "MgmtIngress443" {
 	type = "ingress"
 	security_group_id = aws_security_group.MgmtSecurityGroup.id
@@ -253,12 +314,332 @@ resource "aws_security_group_rule" "MgmtIngress443" {
 	cidr_blocks = [ local.InboundIPv4CidrBlock ]
 }
 
+resource "aws_security_group_rule" "MgmtIngress605" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "UDP port"
+	from_port = "605"
+	protocol = "udp"
+	to_port = "605"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress998" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "998"
+	protocol = "tcp"
+	to_port = "1000"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress1000" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id      
+	description = "UDP port"
+	from_port = "1000"
+	protocol = "udp"
+	to_port = "1000"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress1080" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "1080"
+	protocol = "tcp"
+	to_port = "1080"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress2345" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "2345"
+	protocol = "tcp"
+	to_port = "2345"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress2601" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "2601"
+	protocol = "tcp"
+	to_port = "2601"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress3222" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "3222"
+	protocol = "tcp"
+	to_port = "3222"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
 resource "aws_security_group_rule" "MgmtIngress3389" {
 	type = "ingress"
 	security_group_id = aws_security_group.MgmtSecurityGroup.id
 	protocol = "tcp"
 	from_port = 3389
 	to_port = 3389
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress3601" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "3601"
+	protocol = "tcp"
+	to_port = "3601"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress4501" {	                
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "4501"
+	protocol = "tcp"
+	to_port = "4502"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress4601" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "4601"
+	protocol = "tcp"
+	to_port = "4601"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress5285" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "5285"
+	protocol = "tcp"
+	to_port = "5286"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress5326" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "5326"
+	protocol = "tcp"
+	to_port = "5327"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress5480" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "5480"
+	protocol = "tcp"
+	to_port = "5480"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress5488" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "5488"
+	protocol = "tcp"
+	to_port = "5489"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress6001" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "6001"
+	protocol = "tcp"
+	to_port = "6005"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress6004" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "UDP port"
+	from_port = "6004"
+	protocol = "udp"
+	to_port = "6004"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress6665" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "6665"
+	protocol = "tcp"
+	to_port = "6665"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress6967" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "6967"
+	protocol = "tcp"
+	to_port = "6967"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress6978" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "6978"
+	protocol = "tcp"
+	to_port = "6978"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress8021" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "8021"
+	protocol = "tcp"
+	to_port = "8022"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress8881" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "8881"
+	protocol = "tcp"
+	to_port = "8881"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress8989" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "8989"
+	protocol = "tcp"
+	to_port = "8990"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress9101" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "9101"
+	protocol = "tcp"
+	to_port = "9102"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress9613" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "9613"
+	protocol = "tcp"
+	to_port = "9676"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress10115" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "10115"
+	protocol = "tcp"
+	to_port = "10116"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress10116" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "UDP port"
+	from_port = "10116"
+	protocol = "udp"
+	to_port = "10116"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress10119" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "10119"
+	protocol = "tcp"
+	to_port = "10119"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress17662" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "17662"
+	protocol = "tcp"
+	to_port = "17662"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress17668" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "17668"
+	protocol = "tcp"
+	to_port = "17777"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress18765" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "18765"
+	protocol = "tcp"
+	to_port = "18765"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress21123" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "21123"
+	protocol = "tcp"
+	to_port = "21123"
+	cidr_blocks = [ local.InboundIPv4CidrBlock ]
+}
+
+resource "aws_security_group_rule" "MgmtIngress21653" {	
+	type = "ingress"
+	security_group_id = aws_security_group.MgmtSecurityGroup.id
+	description = "TCP port"
+	from_port = "21653"
+	protocol = "tcp"
+	to_port = "21653"
 	cidr_blocks = [ local.InboundIPv4CidrBlock ]
 }
 
@@ -356,7 +737,7 @@ resource "aws_route" "Test1Route" {
 		aws_internet_gateway.InternetGw
 	]
 }
-	
+
 resource "aws_route_table" "Test1RouteTable" {
 	vpc_id = aws_vpc.Vpc.id
 	tags = {
