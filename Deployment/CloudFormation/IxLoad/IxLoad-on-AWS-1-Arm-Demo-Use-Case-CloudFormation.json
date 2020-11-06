@@ -910,9 +910,9 @@
                     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
                 ],
                 "Path": "/"
-            },
+			},
             "Type": "AWS::IAM::Role"
-        }
+		}
 	},
 	"Metadata" : {
 		"AWS::CloudFormation::Interface" : {	
@@ -976,7 +976,7 @@
     },
     "Parameters" : {
         "UserEmailTag" : {
-        "Description" : "Email address tag of user creating the stack",
+		"Description" : "Email address tag of user creating the stack",
         "MinLength": "14",
         "Type" : "String"
       },
