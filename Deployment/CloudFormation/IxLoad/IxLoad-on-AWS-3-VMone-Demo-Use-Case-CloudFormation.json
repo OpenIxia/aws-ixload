@@ -131,7 +131,7 @@
 			}
 		},
 		"VariableMap" : {
-			"global" : {
+			"local" : {
 				"OPTIONSxTAG" : "MANUAL",
 				"PROJECTxTAG" : "OPEN_IXIA",
 				"VPCxCIDRxBLOCK" : "10.0.0.0/16",
@@ -153,9 +153,7 @@
 				"INSTANCExEBSxDELETExONxTERMINATION" : true,
 				"INSTANCExEBSxVOLUMExTYPE" : "gp2",
 				"APPxTAG" : "IXLOAD",
-				"APPxVERSION" : "9.10"
-			},
-			"local" : {
+				"APPxVERSION" : "9.10",
 				"CLIENTxIMGxSIZE" : "70",
 				"VMONE1xETH0xPRIVATExIPxADDRESS" : "10.0.10.11",
 				"VMONE1xETH1xPRIVATExIPxADDRESSES" : "10.0.2.12|10.0.2.13|10.0.2.14|10.0.2.15|10.0.2.16|10.0.2.17|10.0.2.18|10.0.2.19|10.0.2.20|10.0.2.21",
@@ -170,20 +168,20 @@
 		"PlacementGroup": {
 			"Type" : "AWS::EC2::PlacementGroup",
 			"Properties" : {
-				"Strategy" : { "Fn::FindInMap" : [ "VariableMap", "global", "PLACEMENTxGROUPxSTRATEGY"] }
+				"Strategy" : { "Fn::FindInMap" : [ "VariableMap", "local", "PLACEMENTxGROUPxSTRATEGY"] }
 			}
 		},
 		"Vpc": {
 			"Type": "AWS::EC2::VPC",
 			"Properties": {
-				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "global", "VPCxCIDRxBLOCK"] },
-				"InstanceTenancy": { "Fn::FindInMap" : [ "VariableMap", "global", "VPCxINSTANCExTENANCY"] },
-				"EnableDnsSupport": { "Fn::FindInMap" : [ "VariableMap", "global", "VPCxENABLExDNSxSUPPORT"] },
-				"EnableDnsHostnames": { "Fn::FindInMap" : [ "VariableMap", "global", "VPCxENABLExDNSxHOSTNAMES"] },
+				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "local", "VPCxCIDRxBLOCK"] },
+				"InstanceTenancy": { "Fn::FindInMap" : [ "VariableMap", "local", "VPCxINSTANCExTENANCY"] },
+				"EnableDnsSupport": { "Fn::FindInMap" : [ "VariableMap", "local", "VPCxENABLExDNSxSUPPORT"] },
+				"EnableDnsHostnames": { "Fn::FindInMap" : [ "VariableMap", "local", "VPCxENABLExDNSxHOSTNAMES"] },
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "VPC", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "VPC", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -192,11 +190,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -205,25 +203,25 @@
 			"Type" : "AWS::EC2::FlowLog",
 			"Properties" : {
 				"DeliverLogsPermissionArn" : { "Fn::GetAtt" : ["VPCFlowLogAccessRole", "Arn"] },
-				"LogGroupName" : { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "VPC_FLOW_LOG", 
+				"LogGroupName" : { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "VPC_FLOW_LOG", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
 				"ResourceId" : { "Ref" : "Vpc" },
-				"ResourceType" : { "Fn::FindInMap" : [ "VariableMap", "global", "FLOWxLOGxRESOURCExTYPE"] },
-				"TrafficType" : { "Fn::FindInMap" : [ "VariableMap", "global", "FLOWxLOGxTRAFFICxTYPE"] }
+				"ResourceType" : { "Fn::FindInMap" : [ "VariableMap", "local", "FLOWxLOGxRESOURCExTYPE"] },
+				"TrafficType" : { "Fn::FindInMap" : [ "VariableMap", "local", "FLOWxLOGxTRAFFICxTYPE"] }
 			}
 		},
 		"MgmtSubnet": {
 			"Type": "AWS::EC2::Subnet",
 			"Properties": {
-				"AvailabilityZone": { "Fn::Select" : [ { "Fn::FindInMap" : [ "VariableMap", "global", "SUBNETxAVAILABILITYxZONExINDEX"] }, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
-				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "global", "MGMTxSUBNETxCIDRxBLOCK"] },
+				"AvailabilityZone": { "Fn::Select" : [ { "Fn::FindInMap" : [ "VariableMap", "local", "SUBNETxAVAILABILITYxZONExINDEX"] }, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
+				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "local", "MGMTxSUBNETxCIDRxBLOCK"] },
 				"VpcId": {
 					"Ref": "Vpc"
 				},
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "MGMT_SUBNET", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "MGMT_SUBNET", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -232,11 +230,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -244,15 +242,15 @@
 		"Test1Subnet": {
 			"Type": "AWS::EC2::Subnet",
 			"Properties": {
-				"AvailabilityZone": { "Fn::Select" : [ { "Fn::FindInMap" : [ "VariableMap", "global", "SUBNETxAVAILABILITYxZONExINDEX"] }, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
-				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "global", "TEST1xSUBNETxCIDRxBLOCK"] },
+				"AvailabilityZone": { "Fn::Select" : [ { "Fn::FindInMap" : [ "VariableMap", "local", "SUBNETxAVAILABILITYxZONExINDEX"] }, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
+				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "local", "TEST1xSUBNETxCIDRxBLOCK"] },
 				"VpcId": {
 					"Ref": "Vpc"
 				},
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "TEST1_SUBNET", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "TEST1_SUBNET", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -261,11 +259,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -273,15 +271,15 @@
   		"Test2Subnet": {
 			"Type": "AWS::EC2::Subnet",
 			"Properties": {
-				"AvailabilityZone": { "Fn::Select" : [ { "Fn::FindInMap" : [ "VariableMap", "global", "SUBNETxAVAILABILITYxZONExINDEX"] }, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
-				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "global", "TEST2xSUBNETxCIDRxBLOCK"] },
+				"AvailabilityZone": { "Fn::Select" : [ { "Fn::FindInMap" : [ "VariableMap", "local", "SUBNETxAVAILABILITYxZONExINDEX"] }, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
+				"CidrBlock": { "Fn::FindInMap" : [ "VariableMap", "local", "TEST2xSUBNETxCIDRxBLOCK"] },
 				"VpcId": {
 					"Ref": "Vpc"
 				},
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "TEST2_SUBNET", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "TEST2_SUBNET", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -290,11 +288,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -302,7 +300,7 @@
 		"MgmtSecurityGroup": {
 			"Type": "AWS::EC2::SecurityGroup",
 			"Properties": {
-				"GroupDescription": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "MGMT_SECURITY_GROUP", 
+				"GroupDescription": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "MGMT_SECURITY_GROUP", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
 				"VpcId": {
 					"Ref": "Vpc"
@@ -310,7 +308,7 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "MGMT_SECURITY_GROUP", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "MGMT_SECURITY_GROUP", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -319,11 +317,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -391,7 +389,7 @@
         "Test1SecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
-                "GroupDescription": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "TEST1_SECURITY_GROUP", 
+                "GroupDescription": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "TEST1_SECURITY_GROUP", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
                 "VpcId": {
                     "Ref": "Vpc"
@@ -410,7 +408,7 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "TEST1_SECURITY_GROUP", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "TEST1_SECURITY_GROUP", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -419,11 +417,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -454,7 +452,7 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "INTERNET_GW", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "INTERNET_GW", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -463,11 +461,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -505,7 +503,7 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "MGMT_ROUTE_TABLE", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "MGMT_ROUTE_TABLE", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -514,11 +512,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -545,7 +543,7 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "TEST1_ROUTE_TABLE", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "TEST1_ROUTE_TABLE", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -554,11 +552,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -585,7 +583,7 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, "TEST2_ROUTE_TABLE", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, "TEST2_ROUTE_TABLE", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -594,11 +592,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -639,11 +637,11 @@
 		"IxiaClientEth0": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "CLIENT", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "CLIENT", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "MgmtSubnet"
 				},
@@ -655,9 +653,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "CLIENT", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "CLIENT", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -666,11 +664,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -678,11 +676,11 @@
 		"VMOne1Eth0": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE1", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE1", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "MgmtSubnet"
 				},
@@ -695,9 +693,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE1", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE1", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -706,11 +704,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -718,11 +716,11 @@
 		"VMOne1Eth1": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE1", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH1", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE1", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH1", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "Test1Subnet"
 				},
@@ -773,9 +771,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE1", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH1", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE1", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH1", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -784,11 +782,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -796,11 +794,11 @@
 		"VMOne2Eth0": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE2", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE2", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "MgmtSubnet"
 				},
@@ -813,9 +811,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE2", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE2", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -824,11 +822,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -836,11 +834,11 @@
 		"VMOne2Eth1": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE2", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH1", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE2", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH1", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "Test2Subnet"
 				},
@@ -891,9 +889,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE2", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH1", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE2", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH1", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -902,11 +900,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -914,11 +912,11 @@
 		"VMOne3Eth0": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE3", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE3", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "MgmtSubnet"
 				},
@@ -931,9 +929,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] },
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE3", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH0", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] },
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE3", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH0", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -942,11 +940,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -954,11 +952,11 @@
 		"VMOne3Eth1": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
-				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE3", 
-					{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH1", 
+				"Description": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE3", 
+					{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH1", 
 					{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] },
-				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "global", "INTERFACExSOURCExDESTxCHECK"] },
+				"SourceDestCheck": { "Fn::FindInMap" : [ "VariableMap", "local", "INTERFACExSOURCExDESTxCHECK"] },
 				"SubnetId": {
 					"Ref": "Test2Subnet"
 				},
@@ -1009,9 +1007,9 @@
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE3", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, "ETH1", 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE3", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, "ETH1", 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -1020,11 +1018,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				]
 			}
@@ -1032,19 +1030,19 @@
 		"VMOne1": {
 			"Type": "AWS::EC2::Instance",
 			"Properties": {
-				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExDISABLExAPIxTERMINATION"] },
-				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
+				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExDISABLExAPIxTERMINATION"] },
+				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
 				"ImageId": { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMIxVMONE"] },
 				"InstanceType": { "Ref" : "VMoneInstanceType" },
-				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExMONITORING"] },
+				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExMONITORING"] },
                 "KeyName" : { "Ref" : "IxClientSSHKey" },
 				"PlacementGroupName" : { "Ref" : "PlacementGroup" },
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE1", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE1", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -1053,11 +1051,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				],
 				"UserData": "",
@@ -1077,10 +1075,10 @@
 				],
 				"BlockDeviceMappings" : [
 					{
-						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExBLOCKxDEVICExNAME"] },
+						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExBLOCKxDEVICExNAME"] },
 						"Ebs" : { 
-							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxDELETExONxTERMINATION"] },
-							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxVOLUMExTYPE"] }
+							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxDELETExONxTERMINATION"] },
+							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxVOLUMExTYPE"] }
 						}
 					}
 				]   
@@ -1089,19 +1087,19 @@
 		"VMOne2": {
 			"Type": "AWS::EC2::Instance",
 			"Properties": {
-				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExDISABLExAPIxTERMINATION"] },
-				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
+				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExDISABLExAPIxTERMINATION"] },
+				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
 				"ImageId": { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMIxVMONE"] },
 				"InstanceType": { "Ref" : "VMoneInstanceType" },
-				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExMONITORING"] },
+				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExMONITORING"] },
                 "KeyName" : { "Ref" : "IxClientSSHKey" },
 				"PlacementGroupName" : { "Ref" : "PlacementGroup" },
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE2", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE2", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -1110,11 +1108,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				],
 				"UserData": "",
@@ -1134,10 +1132,10 @@
 				],
 				"BlockDeviceMappings" : [
 					{
-						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExBLOCKxDEVICExNAME"] },
+						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExBLOCKxDEVICExNAME"] },
 						"Ebs" : { 
-							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxDELETExONxTERMINATION"] },
-							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxVOLUMExTYPE"] }
+							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxDELETExONxTERMINATION"] },
+							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxVOLUMExTYPE"] }
 						}
 					}
 				]
@@ -1146,19 +1144,19 @@
 		"VMOne3": {
 			"Type": "AWS::EC2::Instance",
 			"Properties": {
-				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExDISABLExAPIxTERMINATION"] },
-				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
+				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExDISABLExAPIxTERMINATION"] },
+				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
 				"ImageId": { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMIxVMONE"] },
 				"InstanceType": { "Ref" : "VMoneInstanceType" },
-				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExMONITORING"] },
+				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExMONITORING"] },
                 "KeyName" : { "Ref" : "IxClientSSHKey" },
 				"PlacementGroupName" : { "Ref" : "PlacementGroup" },
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "VMONE3", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "VMONE3", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -1167,11 +1165,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				],
 				"UserData": "",
@@ -1191,10 +1189,10 @@
 				],
 				"BlockDeviceMappings" : [
 					{
-						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExBLOCKxDEVICExNAME"] },
+						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExBLOCKxDEVICExNAME"] },
 						"Ebs" : { 
-							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxDELETExONxTERMINATION"] },
-							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxVOLUMExTYPE"] }
+							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxDELETExONxTERMINATION"] },
+							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxVOLUMExTYPE"] }
 						}
 					}
 				]   
@@ -1203,19 +1201,19 @@
 		"IxiaClient": {
 			"Type": "AWS::EC2::Instance",
 			"Properties": {
-				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExDISABLExAPIxTERMINATION"] },
-				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
+				"DisableApiTermination": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExDISABLExAPIxTERMINATION"] },
+				"InstanceInitiatedShutdownBehavior": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExINSTANCExINITIATEDxSHUTDOWNxBEHAVIOR"] },
 				"ImageId": { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMIxCLIENT"] },
 				"InstanceType": { "Ref" : "IxClientInstanceType" },
-				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExMONITORING"] },
+				"Monitoring": { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExMONITORING"] },
                 "KeyName" : { "Ref" : "IxClientSSHKey" },
 				"PlacementGroupName" : { "Ref" : "PlacementGroup" },
 				"Tags": [
 					{
 						"Key": "Name",
-						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }, 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxTAG"] }, "CLIENT", 
-							{ "Fn::FindInMap" : [ "VariableMap", "global", "APPxVERSION"] }, 
+						"Value": { "Fn::Join" : [ "_", [ { "Ref" : "UserLoginTag" }, { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }, 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxTAG"] }, "CLIENT", 
+							{ "Fn::FindInMap" : [ "VariableMap", "local", "APPxVERSION"] }, 
 							{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "REGIONxTAG"]} ] ] }
 					},
 					{
@@ -1224,11 +1222,11 @@
 					},
 					{
 						"Key": "Options",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "OPTIONSxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "OPTIONSxTAG"] }
 					},
 					{
 						"Key": "Project",
-						"Value": { "Fn::FindInMap" : [ "VariableMap", "global", "PROJECTxTAG"] }
+						"Value": { "Fn::FindInMap" : [ "VariableMap", "local", "PROJECTxTAG"] }
 					}
 				],
 
@@ -1242,11 +1240,11 @@
 				],
 				"BlockDeviceMappings" : [
 					{
-						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExBLOCKxDEVICExNAME"] },
+						"DeviceName" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExBLOCKxDEVICExNAME"] },
 						"Ebs" : { 
 							"VolumeSize" : { "Fn::FindInMap" : [ "VariableMap", "local", "CLIENTxIMGxSIZE"] },
-							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxDELETExONxTERMINATION"] },
-							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "global", "INSTANCExEBSxVOLUMExTYPE"] }
+							"DeleteOnTermination" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxDELETExONxTERMINATION"] },
+							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxVOLUMExTYPE"] }
 						}
 					}
 				]
