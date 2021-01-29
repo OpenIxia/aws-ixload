@@ -172,7 +172,7 @@
 				"INSTANCExEBSxVOLUMExTYPE" : "gp2",
 				"APPxTAG" : "IXLOAD",
 				"APPxVERSION" : "9.10",
-				"CLIENTxIMGxSIZE" : "70",
+				"CLIENTxIMGxSIZE" : "100",
 				"VMONE1xETH0xPRIVATExIPxADDRESS" : "10.0.10.11",
 				"VMONE1xETH1xPRIVATExIPxADDRESSES" : "10.0.2.12|10.0.2.13|10.0.2.14|10.0.2.15|10.0.2.16|10.0.2.17|10.0.2.18|10.0.2.19|10.0.2.20|10.0.2.21",
 				"VMONE2xETH0xPRIVATExIPxADDRESS" : "10.0.10.12",
@@ -814,7 +814,7 @@
 					}
 				]
 			}
-		},        
+		},
 		"VMOne2Eth0": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
@@ -1206,7 +1206,7 @@
 					}
 				]
 			}
-		},            
+		},
 		"IxiaClient": {
 			"Type": "AWS::EC2::Instance",
 			"Properties": {
@@ -1256,7 +1256,7 @@
 							"VolumeType" : { "Fn::FindInMap" : [ "VariableMap", "local", "INSTANCExEBSxVOLUMExTYPE"] }
 						}
 					}
-				]   
+				]
 			},
 			"DependsOn": [
 				"VMOne1"
@@ -1548,9 +1548,9 @@
                     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
                 ],
                 "Path": "/"
-            },
+			},
             "Type": "AWS::IAM::Role"
-        }
+		}
 	},
 	"Metadata" : {
 		"AWS::CloudFormation::Interface" : {	
@@ -1614,7 +1614,7 @@
     },
     "Parameters" : {
         "UserEmailTag" : {
-        "Description" : "Email address tag of user creating the stack",
+		"Description" : "Email address tag of user creating the stack",
         "MinLength": "14",
         "Type" : "String"
       },

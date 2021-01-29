@@ -150,7 +150,7 @@
 				"INSTANCExEBSxVOLUMExTYPE" : "gp2",
 				"APPxTAG" : "IXLOAD",
 				"APPxVERSION" : "9.10",
-				"CLIENTxIMGxSIZE" : "70"
+				"CLIENTxIMGxSIZE" : "100"
 			}
 		}
 	},
@@ -780,7 +780,7 @@
 					}
 				]
 			}
-		},        
+		},
 		"VMOne2Eth0": {
 			"Type": "AWS::EC2::NetworkInterface",
 			"Properties": {
@@ -1158,9 +1158,9 @@
                     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
                 ],
                 "Path": "/"
-            },
+			},
             "Type": "AWS::IAM::Role"
-        }
+		}
 	},
 	"Metadata" : {
 		"AWS::CloudFormation::Interface" : {	
@@ -1263,7 +1263,7 @@
     },
     "Parameters" : {
         "UserEmailTag" : {
-        "Description" : "Email address tag of user creating the stack",
+		"Description" : "Email address tag of user creating the stack",
         "MinLength": "14",
         "Type" : "String"
       },

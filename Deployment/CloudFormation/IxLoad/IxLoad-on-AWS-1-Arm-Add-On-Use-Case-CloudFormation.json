@@ -144,7 +144,7 @@
 				"INSTANCExEBSxVOLUMExTYPE" : "gp2",
 				"APPxTAG" : "IXLOAD",
 				"APPxVERSION" : "9.10",
-				"CLIENTxIMGxSIZE" : "70"
+				"CLIENTxIMGxSIZE" : "100"
 			}
 		}
 	},
