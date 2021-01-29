@@ -378,7 +378,7 @@ resource "aws_route" "Test1Route" {
 		aws_internet_gateway.InternetGw
 	]
 }
-	
+
 resource "aws_route_table" "Test1RouteTable" {
 	vpc_id = aws_vpc.Vpc.id
 	tags = {
